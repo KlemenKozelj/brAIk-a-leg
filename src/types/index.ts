@@ -20,6 +20,8 @@ export interface Feedback {
   scores: PerformanceScores;
   strength: string;
   retryCue: string;
+  /** Warning shown when using mock/simulated feedback instead of real AI analysis */
+  warning?: string;
 }
 
 export interface ScoreComparison {

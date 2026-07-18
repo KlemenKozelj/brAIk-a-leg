@@ -230,35 +230,56 @@ Do NOT wrap in markdown. Return raw JSON only.`;
   return parseFeedback(raw);
 }
 
-// ── Mock fallback (when no API key or analysis fails) ──────────────────────
+// ── Super-funny mock fallback (when no API key or analysis fails) ──────────
 
-function mockAnalyze(emotion: string): Feedback {
+const FUNNY_STRENGTHS = [
+  "Your commitment was so strong, Stanislavski just rolled over in his grave — respectfully.",
+  "That delivery had more layers than a Broadway actor's insecurity. Bravo!",
+  "You ate that line and left no crumbs — the theater gods are taking notes.",
+  "Your emotional range stretched from here to the back of the nosebleed section. Impressive range!",
+  "If acting were an Olympic sport, you'd be Michael Phelps in a tutu. Flawless.",
+  "You brought so much presence I felt like I was watching the Super Bowl halftime show. And I'm not even American!",
+  "That performance had more spice than a ghost pepper. Absolute fire.",
+  "You acted so hard, method actors are taking notes. Daniel Day-Lewis is shook.",
+  "Your delivery was crispier than bacon at 6 AM. Perfect.",
+  "That took more guts than eating gas-station sushi. Respect.",
+  "You didn't just act that line — you adopted it, fed it, and sent it to college.",
+  "Your timing was better than a pizza delivery on a Friday night. Bravo!",
+  "The way you owned that line, I'm pretty sure it's paying you rent now.",
+  "That was so good, I'm genuinely mad about it. How dare you be this talented.",
+  "You brought more heat than my laptop running 40 Chrome tabs. Sizzling performance!",
+];
+
+const FUNNY_CUES = [
+  (e: string) => `Try saying "${e}" like you just spotted your ex at Target with their new partner. Unprepared, chaotic, iconic.`,
+  (e: string) => `Pause like you're about to tell your parents you failed your driver's test. Again.`,
+  (e: string) => `Deliver it like you're explaining to your grandma what a meme is. For the fifth time.`,
+  (e: string) => `Pretend there's a spider on the wall behind the camera — and also you're ${e}. Terrifying combo.`,
+  (e: string) => `Say it like you're ordering pizza but the restaurant closes in 3 minutes AND they just said the word "${e}".`,
+  (e: string) => `Act like the Wi-Fi is about to go out during the final boss battle. That kind of urgency.`,
+  (e: string) => `Imagine you're ${e} but also you stepped in a puddle in fresh socks. Let that fuel you.`,
+  (e: string) => `Try it again, but this time pretend you're being aggressively judged by a cat.`,
+  (e: string) => `You sounded ${e} but also like you just realized you left the stove on. Add that panic.`,
+  (e: string) => `Channel the energy of someone who's ${e} and also just found out their flight got cancelled.`,
+  (e: string) => `Your body language said "${e}" but your pinky said "I'm thinking about taxes." Full body commitment!`,
+  (e: string) => `Try doing the scene like you're ${e} and also iced coffee just spilled on your shirt.`,
+  (e: string) => `More ${e}, less "I'm waiting for the bus." The audience can smell the difference.`,
+  (e: string) => `Great start! Now do it again like you're ${e} and someone just ate your leftovers. Personal.`,
+  (e: string) => `You're giving "${e}" which is great, but also a little "I forgot my lines" — fake it till you make it!`,
+];
+
+function mockAnalyze(emotion: string, reason?: string): Feedback {
   const scores: PerformanceScores = {
     emotion: Math.floor(Math.random() * 3) + 3,
     clarity: Math.floor(Math.random() * 3) + 3,
     pace: Math.floor(Math.random() * 3) + 3,
   };
 
-  const strengths = [
-    'Great emotional range in your delivery.',
-    'Strong vocal projection and presence.',
-    'Good physical engagement with the emotion.',
-    'Natural timing in your performance.',
-    'Clear commitment to the character.',
-  ];
-
-  const cues = [
-    `Try varying your tempo to better express "${emotion}".`,
-    `Consider pausing before the key word for more impact.`,
-    `Your eyes could convey more of the "${emotion}" feeling.`,
-    `Try a lower register to ground the emotion.`,
-    `Experiment with a sharper attack on the opening.`,
-  ];
-
   return {
     scores,
-    strength: strengths[Math.floor(Math.random() * strengths.length)],
-    retryCue: cues[Math.floor(Math.random() * cues.length)],
+    strength: FUNNY_STRENGTHS[Math.floor(Math.random() * FUNNY_STRENGTHS.length)],
+    retryCue: FUNNY_CUES[Math.floor(Math.random() * FUNNY_CUES.length)](emotion),
+    warning: reason || '⚠️ **Simulated Mode** — no OpenAI API key detected. Set `NEXT_PUBLIC_OPENAI_API_KEY` in `.env.local` for real AI analysis. Until then, enjoy these entirely made-up compliments! 🎭',
   };
 }
 
@@ -281,8 +302,12 @@ export async function analyzeTake(
 ): Promise<Feedback> {
   const apiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
 
-  if (!apiKey || apiKey === '' || !videoBlob) {
-    return mockAnalyze(emotion);
+  if (!apiKey || apiKey === '') {
+    return mockAnalyze(emotion, '🔮 **Fortune-Teller Mode** — no API key set! These scores are imaginary (but very supportive). Drop a real key if you want the AI to actually watch your video. 🎬');
+  }
+
+  if (!videoBlob) {
+    return mockAnalyze(emotion, '📼 **Where\'s the tape?** No video received, so I\'m making stuff up. You\'re amazing at things I totally saw. Probably.');
   }
 
   try {
@@ -302,6 +327,7 @@ export async function analyzeTake(
     return await analyzePerformance(line, emotion, transcript, frames);
   } catch (err) {
     console.warn('AI analysis failed, falling back to mock:', err);
-    return mockAnalyze(emotion);
+    const msg = err instanceof Error ? err.message : 'unknown error';
+    return mockAnalyze(emotion, `🤖 **Tech Meltdown!** The AI had a little cry: "${msg}". Here's some very professional guessing instead. You're welcome. 🎭`);
   }
 }

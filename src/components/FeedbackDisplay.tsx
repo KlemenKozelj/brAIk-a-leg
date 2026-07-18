@@ -63,6 +63,13 @@ export default function FeedbackDisplay({
 }: FeedbackDisplayProps) {
   return (
     <div className="flex flex-col items-center gap-6 w-full max-w-md mx-auto animate-fade-in">
+      {/* Warning Banner (mock/simulated mode) */}
+      {feedback.warning && (
+        <div className="w-full p-3 sm:p-4 rounded-xl bg-gradient-to-r from-amber-900/60 via-yellow-800/50 to-amber-900/60 border border-amber-500/40 text-center">
+          <p className="text-amber-300 text-xs sm:text-sm leading-relaxed">{feedback.warning}</p>
+        </div>
+      )}
+
       {/* Scores Section */}
       <div className="w-full space-y-1.5">
         <h3 className="text-gold text-sm font-semibold uppercase tracking-wider mb-2">
