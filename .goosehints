@@ -1,0 +1,51 @@
+# Goose hints for Actor Coach PWA
+
+## Project overview
+Pure frontend Next.js 14 PWA. 3 screens: Roulette → Record → Feedback. All state in sessionStorage. No backend, no database, no API routes, no middleware.
+
+## Golden rules
+- NEVER create API routes, middleware, server stores, or session management
+- NEVER add Redis, Docker, or any server-side dependencies
+- ALL logic goes in the client — components, libs, and pages
+- ALL state uses sessionStorage (not cookies, not server stores)
+- Keep it simple — this is an MVP
+
+## File structure
+src/
+  app/                  # Next.js App Router pages
+    page.tsx            # Auto-redirects to /roulette
+    roulette/page.tsx   # Spin wheel, start take
+    record/page.tsx     # Submit take, call AI stub
+    feedback/page.tsx   # Show scores + deltas
+  components/           # React components
+  lib/                  # Pure client libraries
+  types/                # All TypeScript types
+
+## Key conventions
+- All interactive pages use 'use client'
+- Styling uses Tailwind with custom theme: stage-*, crimson-*, gold-*, electric-*
+- Animations respect prefers-reduced-motion
+- EMOTIONS array has exactly 20 entries (defined in types/index.ts)
+- FALLBACK_LINES has exactly 50 entries (defined in fallbackPool.ts)
+- analyzeTake() in ai.ts returns mock data — replace body only, keep signature
+- validateLine() checks for forbidden content — keep regex list updated
+
+## Tests
+- tests/unit/ for pure logic (validation, fallbackPool, types)
+- tests/component/ for component rendering
+- tests/ setup.ts has MediaRecorder + getUserMedia mocks
+- Jest config is jest.config.js (not .ts)
+- Run: npm test
+
+## Package.json rules
+- No server dependencies (no ioredis, no iron-session, no jose, no fluent-ffmpeg)
+- Next.js output: standalone
+- Keep dependency count minimal
+
+## When adding features
+1. Add types first (src/types/index.ts)
+2. Add lib functions if needed
+3. Add/update component
+4. Update page
+5. Add test
+6. Verify with npm test + npm run build
