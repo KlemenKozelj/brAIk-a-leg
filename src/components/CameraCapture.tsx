@@ -148,34 +148,18 @@ export default function CameraCapture({
 
       {/* Camera / Preview */}
       <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden bg-black border-2 border-gold/30">
-        {(state === 'idle' || state === 'countdown') && (
+        {/* Single persistent live camera feed — never re-creates, prevents black screen */}
+        {state !== 'preview' && state !== 'submitted' && (
           <video
             ref={videoRef}
             autoPlay
             playsInline
             muted
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover scale-x-[-1]"
           />
         )}
 
-        {state === 'recording' && (
-          <>
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              muted
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute top-3 right-3 flex items-center gap-2 bg-black/70 px-3 py-1.5 rounded-full">
-              <span className="w-2.5 h-2.5 rounded-full bg-crimson animate-pulse" />
-              <span className="text-white text-xs font-mono">
-                {recordingTime.toFixed(1)}s / {MAX_DURATION}s
-              </span>
-            </div>
-          </>
-        )}
-
+        {/* Preview playback */}
         {state === 'preview' && recordedBlob && (
           <video
             ref={previewRef}
@@ -187,6 +171,7 @@ export default function CameraCapture({
           />
         )}
 
+        {/* Camera off overlay */}
         {state === 'idle' && !streamRef.current && (
           <div className="absolute inset-0 flex items-center justify-center bg-stage-dark/80">
             <div className="text-center text-gold/60">
@@ -201,6 +186,16 @@ export default function CameraCapture({
           <div className="absolute inset-0 flex items-center justify-center bg-black/60">
             <span className="text-6xl sm:text-8xl font-bold text-gold animate-bounce-in">
               {countdown}
+            </span>
+          </div>
+        )}
+
+        {/* Recording indicator */}
+        {state === 'recording' && (
+          <div className="absolute top-3 right-3 flex items-center gap-2 bg-black/70 px-3 py-1.5 rounded-full">
+            <span className="w-2.5 h-2.5 rounded-full bg-crimson animate-pulse" />
+            <span className="text-white text-xs font-mono">
+              {recordingTime.toFixed(1)}s / {MAX_DURATION}s
             </span>
           </div>
         )}
