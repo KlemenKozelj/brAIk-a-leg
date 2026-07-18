@@ -72,8 +72,43 @@ Run: `npm test`
 
 ## AI Integration
 
-`src/lib/ai.ts` exports `analyzeTake(line, emotion)` which currently returns mock feedback.
-To wire up real AI:
-1. Set `OPENAI_API_KEY` env var
-2. Replace the function body with actual OpenAI calls
-3. The function signature stays the same — no other changes needed
+`src/lib/ai.ts` exports `analyzeTake(line, emotion, videoBlob?)` — fully wired up.
+
+### Pipeline (all browser-side)
+
+| Step | What happens | Model |
+|------|-------------|-------|
+| 1 | Extract 3 frames at 25%/50%/75% | `<video>` + `<canvas>` → base64 JPEG |
+| 2 | Extract audio → WAV | `AudioContext.decodeAudioData()` |
+| 3 | Transcribe audio | `gpt-4o-transcribe` |
+| 4 | Analyze frames + transcript | `gpt-4o-mini` vision → structured JSON |
+
+### Configuration
+
+Set `NEXT_PUBLIC_OPENAI_API_KEY` in `.env.local` for real AI analysis.
+Without a key, the app falls back to mock data gracefully.
+
+### Fallback behavior
+
+- No API key → mock data (random scores + canned feedback)
+- Audio extraction fails → skip transcription, analyze frames only
+- Any API call fails → log warning, return mock data
+
+## PWA Setup
+
+| Asset | Path | Purpose |
+|-------|------|---------|
+| Manifest | `public/manifest.json` | SVG icons, standalone display, portrait lock |
+| Service Worker | `public/sw.js` | Caches `_next/static/*` and icons, network-first for pages |
+| Registration | Inline script in `src/app/layout.tsx` | Registers SW on load |
+| Icons | `public/icons/icon-192.svg`, `icon-512.svg` | Theater mask emoji on crimson-gold gradient |
+| iOS meta | `apple-touch-icon`, `apple-mobile-web-app-capable` | Safari home screen support |
+
+Safari on iOS requires HTTPS or localhost for PWA install prompt.
+Run `npm run dev` and access via `http://localhost:3000` to test.
+
+### Tests
+
+- `tests/unit/` — validation, fallbackPool, types
+- `tests/component/` — RouletteWheel
+- Run: `npm test`

@@ -31,13 +31,13 @@ export default function RecordPage() {
     }
   }, [router]);
 
-  const handleComplete = useCallback(async (_blob: Blob) => {
+  const handleComplete = useCallback(async (blob: Blob) => {
     if (!exercise) return;
     setSubmitting(true);
     setError(null);
 
     try {
-      const feedback = await analyzeTake(exercise.line, exercise.emotion);
+      const feedback = await analyzeTake(exercise.line, exercise.emotion, blob);
 
       let result: AnalysisResult = { feedback };
 

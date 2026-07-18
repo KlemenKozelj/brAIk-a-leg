@@ -29,6 +29,9 @@ src/
 - FALLBACK_LINES has exactly 50 entries (defined in fallbackPool.ts)
 - analyzeTake() in ai.ts returns mock data — replace body only, keep signature
 - validateLine() checks for forbidden content — keep regex list updated
+- SW is at public/sw.js — caches _next/static/* and icons, network-first for pages
+- Manifest at public/manifest.json — SVG icons only
+- Register SW via inline script in layout.tsx
 
 ## Tests
 - tests/unit/ for pure logic (validation, fallbackPool, types)

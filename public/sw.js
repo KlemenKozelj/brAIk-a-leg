@@ -1,80 +1,76 @@
 // Actor Coach PWA — Service Worker
-// Caches app assets only (not API responses or videos)
+// Caches Next.js app shell assets for offline support
 
 const CACHE_NAME = 'actor-coach-v1';
 
-// App shell assets to pre-cache
-const APP_ASSETS = [
-  '/',
-  '/roulette',
-  '/record',
-  '/feedback',
-  '/manifest.json',
-];
-
-// Install: pre-cache app shell
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(APP_ASSETS);
-    })
-  );
-  // Activate immediately
+// Install: activate immediately
+self.addEventListener('install', () => {
   self.skipWaiting();
 });
 
-// Activate: clean old caches
+// Activate: clean old caches, take control
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames
-          .filter((name) => name !== CACHE_NAME)
-          .map((name) => caches.delete(name))
-      );
-    })
+    caches.keys().then((names) =>
+      Promise.all(
+        names
+          .filter((n) => n !== CACHE_NAME)
+          .map((n) => caches.delete(n))
+      )
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-// Fetch: serve from cache for app assets, network for everything else
+// Fetch: cache Next.js build assets (hashed filenames), network-first for everything else
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Only cache same-origin GET requests for app pages/assets
-  if (
-    request.method === 'GET' &&
-    url.origin === self.location.origin &&
-    (url.pathname === '/' ||
-      url.pathname.startsWith('/_next/') ||
-      url.pathname.startsWith('/icons/') ||
-      url.pathname === '/manifest.json')
-  ) {
+  // Only handle same-origin GET requests
+  if (request.method !== 'GET' || url.origin !== self.location.origin) return;
+
+  // Cache Next.js static assets (hashed chunks - safe to cache aggressively)
+  if (url.pathname.startsWith('/_next/static/')) {
     event.respondWith(
       caches.match(request).then((cached) => {
-        // Return cached if available, otherwise fetch and cache
-        return (
-          cached ||
-          fetch(request).then((response) => {
-            // Don't cache non-OK responses
-            if (!response || response.status !== 200) return response;
+        if (cached) return cached;
+        return fetch(request).then((response) => {
+          if (response.ok) {
             const clone = response.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-            return response;
-          })
-        );
+          }
+          return response;
+        });
       })
     );
     return;
   }
 
-  // For API calls and other requests, go to network only
-  event.respondWith(fetch(request).catch(() => {
-    // If offline and it's a page navigation, show cached version
-    if (request.mode === 'navigate') {
-      return caches.match('/');
-    }
-    return new Response('Offline', { status: 503 });
-  }));
+  // Cache icons and manifest
+  if (url.pathname.startsWith('/icons/') || url.pathname === '/manifest.json') {
+    event.respondWith(
+      caches.match(request).then((cached) => {
+        if (cached) return cached;
+        return fetch(request).then((response) => {
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          }
+          return response;
+        });
+      })
+    );
+    return;
+  }
+
+  // Page navigations: network-first, fall back to cached
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request).catch(() => caches.match('/') || new Response('Offline', { status: 503 }))
+    );
+    return;
+  }
+
+  // Everything else: network only
+  event.respondWith(fetch(request).catch(() => new Response('Offline', { status: 503 })));
 });
