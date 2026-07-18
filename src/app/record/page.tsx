@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import CameraCapture from '@/components/CameraCapture';
 import { analyzeTake } from '@/lib/ai';
 import { Exercise, AnalysisResult } from '@/types';
 
@@ -30,7 +31,7 @@ export default function RecordPage() {
     }
   }, [router]);
 
-  const handleSubmit = useCallback(async () => {
+  const handleComplete = useCallback(async (_blob: Blob) => {
     if (!exercise) return;
     setSubmitting(true);
     setError(null);
@@ -70,33 +71,28 @@ export default function RecordPage() {
   if (!exercise) return null;
 
   return (
-    <div className="flex-1 flex flex-col items-center px-4 py-8 bg-gradient-to-b from-stage-dark via-stage to-stage-light">
-      <div className="text-center mb-6">
-        <h2 className="text-xl font-display text-gold">
+    <div className="flex-1 flex flex-col items-center px-4 py-6 bg-gradient-to-b from-stage-dark via-stage to-stage-light">
+      <div className="text-center mb-4">
+        <h2 className="text-lg font-display text-gold">
           Take {attemptRef.current}{attemptRef.current === 2 ? ' (Coached Retry)' : ''}
         </h2>
         <p className="text-crimson-light text-xs uppercase tracking-[0.15em] mt-0.5">Record your scene</p>
       </div>
 
-      <div className="w-full max-w-sm bg-stage-light/30 rounded-xl p-5 border border-gold/20 mb-8 text-center">
-        <p className="text-white text-lg font-display mb-2">&ldquo;{exercise.line}&rdquo;</p>
-        <p className="text-crimson-light text-sm uppercase tracking-wider font-semibold">{exercise.emotion}</p>
-      </div>
-
-      <button
-        onClick={handleSubmit}
+      <CameraCapture
+        challenge={`${exercise.line}`}
+        onComplete={handleComplete}
         disabled={submitting}
-        className="w-full max-w-sm py-4 rounded-full text-lg font-bold transition-all duration-200
-          bg-gradient-to-r from-crimson to-gold text-white hover:scale-[1.02] active:scale-95
-          disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(220,38,38,0.3)]"
-      >
-        {submitting ? '⏳ Analyzing...' : '🎬 Submit take'}
-      </button>
+      />
 
       {error && (
         <div className="mt-4 w-full max-w-sm text-crimson text-sm text-center bg-crimson/10 p-3 rounded-lg">
           {error}
         </div>
+      )}
+
+      {submitting && (
+        <div className="mt-3 text-center text-white/50 text-sm">⏳ Analyzing your take...</div>
       )}
     </div>
   );
