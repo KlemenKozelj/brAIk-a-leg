@@ -79,18 +79,18 @@ export default function RouletteWheel({
     }, interval);
   }, [disabled, phase, lines, emotions, onSpin, onComplete, prefersReducedMotion]);
 
-  // Shake to spin
+  // Shake to spin — works both for first spin and re-spin
   const { hasPermission, requestPermission } = useShake(
     useCallback(() => {
-      if (phase === 'idle') {
+      if (phase === 'idle' || phase === 'landed') {
         handleSpin();
       }
     }, [phase, handleSpin])
   );
 
-  // Show shake hint after a delay when idle
+  // Show shake hint after a delay when idle or landed
   useEffect(() => {
-    if (phase !== 'idle') {
+    if (phase === 'spinning') {
       setShakeHint(false);
       return;
     }
@@ -167,10 +167,10 @@ export default function RouletteWheel({
       )}
 
       {/* Shake hint */}
-      {phase === 'idle' && shakeHint && (
+      {shakeHint && (phase === 'idle' || phase === 'landed') && (
         <div className="flex flex-col items-center gap-2">
           <p className="text-white/30 text-xs animate-pulse">
-            👋 or shake your phone to spin!
+            {phase === 'idle' ? '👋 or shake your phone to spin!' : '👋 shake again for a new scene!'}
           </p>
           {!hasPermission && (
             <button
