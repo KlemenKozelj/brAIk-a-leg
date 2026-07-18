@@ -1,4 +1,4 @@
-# Goose hints for Actor Coach PWA
+# Goose hints for brAIk-a-leg PWA
 
 ## Project overview
 Pure frontend Next.js 14 PWA. 3 screens: Roulette → Record → Feedback. All state in sessionStorage. No backend, no database, no API routes, no middleware.
@@ -25,8 +25,9 @@ src/
 - All interactive pages use 'use client'
 - Styling uses Tailwind with custom theme: stage-*, crimson-*, gold-*, electric-*
 - Animations respect prefers-reduced-motion
-- EMOTIONS array has exactly 20 entries (defined in types/index.ts)
-- FALLBACK_LINES has exactly 50 entries (defined in fallbackPool.ts)
+- Shake-to-spin uses DeviceMotion API via lib/useShake.ts
+- EMOTIONS array has exactly 20 hilarious+embarrassing entries (defined in types/index.ts)
+- FALLBACK_LINES has exactly 50 hilarious+embarrassing entries (defined in fallbackPool.ts)
 - analyzeTake() in ai.ts returns mock data — replace body only, keep signature
 - validateLine() checks for forbidden content — keep regex list updated
 - SW is at public/sw.js — caches _next/static/* and icons, network-first for pages

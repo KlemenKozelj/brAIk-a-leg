@@ -38,10 +38,10 @@ export interface AnalysisResult {
 }
 
 export const EMOTIONS = [
-  'delighted', 'furious', 'terrified', 'smug', 'heartbroken',
-  'suspicious', 'embarrassed', 'ecstatic', 'confused', 'deadpan',
-  'anxious', 'bored', 'jealous', 'guilty', 'hopeful',
-  'offended', 'playful', 'proud', 'regretful', 'relieved',
+  'caught-naked', 'farted-loudly', 'drunk-texting-my-ex', 'walked-in-on-parents', 'peed-my-pants-laughing',
+  'cried-at-a-commercial', 'mistook-stranger-for-friend', 'texted-the-wrong-group-chat', 'forgot-my-lines-onstage', 'spilled-wine-on-the-boss',
+  'caught-singing-in-mirror', 'pants-ripped-in-public', 'sneezed-in-someones-face', 'called-teacher-mom', 'tripped-on-red-carpet',
+  'burped-during-wedding-toast', 'waved-back-at-no-one', 'showed-up-naked-to-zoom', 'laughed-at-funeral', 'missed-a-high-five',
 ] as const;
 
 export type Emotion = (typeof EMOTIONS)[number];

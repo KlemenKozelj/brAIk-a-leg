@@ -15,14 +15,14 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: 'Actor Coach — Scene Roulette',
+  title: 'brAIk-a-leg — Scene Roulette',
   description:
-    'A casino-inspired PWA for actors to practice scenes with AI-powered feedback.',
+    'A casino-inspired PWA that makes you break a leg (and your dignity) with hilariously embarrassing acting challenges.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Actor Coach',
+    title: 'brAIk-a-leg',
   },
   formatDetection: {
     telephone: false,

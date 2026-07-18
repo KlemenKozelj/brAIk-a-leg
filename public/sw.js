@@ -1,7 +1,7 @@
 // Actor Coach PWA — Service Worker
 // Caches Next.js app shell assets for offline support
 
-const CACHE_NAME = 'actor-coach-v1';
+const CACHE_NAME = 'braik-a-leg-v1';
 
 // Install: activate immediately
 self.addEventListener('install', () => {

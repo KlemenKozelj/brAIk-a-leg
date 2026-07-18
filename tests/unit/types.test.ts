@@ -6,10 +6,10 @@ describe('types and constants', () => {
   });
 
   it('EMOTIONS contains key values', () => {
-    expect(EMOTIONS).toContain('delighted');
-    expect(EMOTIONS).toContain('deadpan');
-    expect(EMOTIONS).toContain('anxious');
-    expect(EMOTIONS).toContain('playful');
+    expect(EMOTIONS).toContain('caught-naked');
+    expect(EMOTIONS).toContain('farted-loudly');
+    expect(EMOTIONS).toContain('peed-my-pants-laughing');
+    expect(EMOTIONS).toContain('laughed-at-funeral');
   });
 
   it('SCORE_LABELS has correct keys', () => {

@@ -23,9 +23,9 @@ describe('validateLine', () => {
 
 describe('isValidEmotion', () => {
   it('returns true for valid emotions', () => {
-    expect(isValidEmotion('delighted')).toBe(true);
-    expect(isValidEmotion('playful')).toBe(true);
-    expect(isValidEmotion('deadpan')).toBe(true);
+    expect(isValidEmotion('caught-naked')).toBe(true);
+    expect(isValidEmotion('farted-loudly')).toBe(true);
+    expect(isValidEmotion('laughed-at-funeral')).toBe(true);
   });
 
   it('returns false for invalid emotions', () => {

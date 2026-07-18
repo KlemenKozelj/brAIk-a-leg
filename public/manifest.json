@@ -1,6 +1,6 @@
 {
-  "name": "Actor Coach — Scene Roulette",
-  "short_name": "Actor Coach",
+  "name": "brAIk-a-leg — Scene Roulette",
+  "short_name": "brAIk-a-leg",
   "description": "A casino-inspired PWA for actors to practice scenes with AI-powered feedback.",
   "start_url": "/",
   "display": "standalone",

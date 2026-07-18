@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { RouletteResult } from '@/types';
+import { useShake } from '@/lib/useShake';
 
 interface RouletteWheelProps {
   lines: string[];
@@ -26,6 +27,7 @@ export default function RouletteWheel({
   const [finalLine, setFinalLine] = useState('');
   const [finalEmotion, setFinalEmotion] = useState('');
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [shakeHint, setShakeHint] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -76,6 +78,25 @@ export default function RouletteWheel({
       }
     }, interval);
   }, [disabled, phase, lines, emotions, onSpin, onComplete, prefersReducedMotion]);
+
+  // Shake to spin
+  const { hasPermission, requestPermission } = useShake(
+    useCallback(() => {
+      if (phase === 'idle') {
+        handleSpin();
+      }
+    }, [phase, handleSpin])
+  );
+
+  // Show shake hint after a delay when idle
+  useEffect(() => {
+    if (phase !== 'idle') {
+      setShakeHint(false);
+      return;
+    }
+    const t = setTimeout(() => setShakeHint(true), 3000);
+    return () => clearTimeout(t);
+  }, [phase]);
 
   return (
     <div className="flex flex-col items-center gap-8 w-full max-w-md mx-auto">
@@ -143,6 +164,28 @@ export default function RouletteWheel({
         >
           {phase === 'spinning' ? '🎰 Spinning...' : '🎰 Spin the scene'}
         </button>
+      )}
+
+      {/* Shake hint */}
+      {phase === 'idle' && shakeHint && (
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-white/30 text-xs animate-pulse">
+            👋 or shake your phone to spin!
+          </p>
+          {!hasPermission && (
+            <button
+              onClick={requestPermission}
+              className="text-xs text-electric-light underline hover:text-electric transition-colors"
+            >
+              Enable shake detection
+            </button>
+          )}
+          {hasPermission && (
+            <p className="text-white/20 text-[10px]">
+              Shake detected ✓
+            </p>
+          )}
+        </div>
       )}
 
       {/* Challenge display */}
