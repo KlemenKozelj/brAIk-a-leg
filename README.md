@@ -1,165 +1,130 @@
-# 🎭 Actor Coach — Scene Roulette PWA
+# 🦵 brAIk-a-leg — Scene Roulette
 
-A casino-inspired progressive web app for actors to practice scenes with AI-powered feedback. Built with Next.js, stateless and simple.
+### *A slot machine that gambles with your dignity, then makes an AI roast the results.*
 
-## Features
+Pull the lever. It hands you a cursed line — say, *"I just called my girlfriend by my ex's name... in bed"* — and an emotion you must deliver it with, like **"smug."** You have 5 seconds, a front camera, and no way out. Then GPT-4o-mini watches the tape, scores your acting, and drags you for it, personally, by name (well — by vibe).
 
-- **Scene Roulette** — Spin to get a random funny line + emotion challenge
-- **Video Recording** — Front camera, 3s countdown, 5s auto-stop, preview/re-record
-- **AI Feedback** — Scores for emotion, clarity, and pace + strength + retry cue
-- **Coached Retry** — Second take with score comparison deltas
-- **PWA Support** — Installable, offline-capable (app shell), portrait-first
-- **Privacy-First** — No accounts, no stored videos, 20-min TTL exercises
+🎰 **Spin** a scene → 🎥 **Film** a 5-second take → 🤖 **Get roasted** (and coached) by AI → 🔄 **Redeem yourself** on retry #2 → 📤 **Share the receipts**
 
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Framework | Next.js 14 (TypeScript) |
-| Styling | Tailwind CSS |
-| State | React hooks + sessionStorage |
-| Session | Signed cookies |
-| AI | OpenAI (GPT-5 mini + GPT-4o mini Transcribe) |
-| Tests | Jest + Playwright |
-
-## Quick Start
+**Go put it in judges' hands right now:**
 
 ```bash
-# Install dependencies
-npm install
-
-# Copy environment
-cp .env.example .env.local
-
-# Start development
-npm run dev
-
-# Open http://localhost:3000
+npm install && cp .env.example .env.local && npm run dev
 ```
 
-## Project Structure
+No login screen. No database. No backend to explain, deploy, or apologize for when it falls over mid-demo — because there isn't one. It's a phone, a browser, and questionable life choices.
+
+---
+
+## Why judges should care
+
+*(besides watching your own teammate get emotionally destroyed by an LLM in front of the room, which — try it once, it's the best part of any demo booth)*
+
+- **Zero backend, fully functional.** Everything — video capture, frame extraction, audio transcription, AI scoring — runs in the browser. `npm install && npm run dev` really is the entire deploy story.
+- **Real AI pipeline, not a gimmick.** The app pulls 3 frames from your video, extracts and transcribes the audio client-side (raw `AudioContext` → WAV, no ffmpeg), and sends it all to OpenAI for structured vision+language analysis.
+- **Graceful without a key.** No `OPENAI_API_KEY`? The app falls back to a large bank of hand-written, unreasonably funny mock feedback instead of breaking — so it's demo-able offline, key-less, mid-flight, whatever.
+- **A genuinely fun core loop.** Roulette spin → 5-second dare → AI roast → coached retry with score deltas → share card. Judges will replay it. That's the tell.
+- **Built-in virality.** One tap fires the native share sheet (or copies to clipboard) with your viral score, star rating, and the AI's roast quote, ready to drop straight into a group chat — the app is designed to leave the room with the judge.
+- **PWA, not just a website.** Installable, offline app-shell caching, portrait-locked — works the moment a judge pulls their phone out of their pocket.
+- **Shake-to-spin.** Uses the `DeviceMotion` API — physically shake the phone to re-spin instead of tapping a button. Small detail, big "oh that's slick" reaction.
+
+## Try it in 60 seconds
+
+```bash
+npm install
+cp .env.example .env.local
+npm run dev
+# open http://localhost:3000 on your phone or desktop (front camera required)
+```
+
+Add a real AI pass by setting one env var in `.env.local`:
+
+```bash
+NEXT_PUBLIC_OPENAI_API_KEY=sk-...
+```
+
+No key set → the app still fully works, just with mock ("Fortune-Teller Mode") feedback instead of live model output.
+
+## The loop
+
+```
+🎰 Roulette          🎥 Record            🤖 Feedback
+Spin a wheel for  →  3s countdown,    →   Emotion/clarity/pace
+a funny line +       5s auto-stop         scores + viral score
+a target emotion     recording,           + a roast + a
+(shake phone to       preview/re-record    "coached retry" cue
+re-spin)                                       │
+                                                ▼
+                                        🔄 Coached Retry
+                                        Same line, one more take
+                                        → side-by-side score deltas
+                                        → 🎰 back to a new scene
+```
+
+All state lives in `sessionStorage` — nothing is written to a server or a database, and nothing survives a tab close.
+
+## Tech stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 14 (App Router, TypeScript) |
+| Styling | Tailwind CSS, custom casino/theater theme |
+| State | React hooks + `sessionStorage` (no backend) |
+| Video/Audio | `MediaRecorder`, `<canvas>` frame grabs, `AudioContext` WAV encoding — all in-browser |
+| AI | OpenAI `gpt-4o-mini` (vision + structured JSON feedback), `gpt-4o-transcribe` (audio) |
+| Motion | `DeviceMotion` API for shake-to-spin |
+| PWA | Web app manifest + service worker (`public/sw.js`), installable, offline app shell |
+| Tests | Jest + Testing Library (unit/component), Playwright (E2E) |
+
+## What happens on submit
+
+1. Pull 3 frames from the recorded clip (25%/50%/75% through, or adapted for very short clips).
+2. Decode the WebM's audio track and hand-roll it into a WAV blob — no ffmpeg dependency needed.
+3. Transcribe the audio with `gpt-4o-transcribe`.
+4. Send the frames + transcript + target line/emotion to `gpt-4o-mini` with a structured JSON response format, asking for:
+   - `emotion` / `clarity` / `pace` scores (1–5)
+   - a `viralScore` (1–10, "would this break the internet")
+   - a one-line `roast` (funny, not cruel)
+   - a `strength` and a `retryCue` for the coached second take
+5. Any failure at any step (no key, camera denied, model error) falls back to a large bank of pre-written funny feedback so the demo never dead-ends.
+
+See [src/lib/ai.ts](src/lib/ai.ts) for the full pipeline.
+
+## Project structure
 
 ```
 src/
-├── app/                    # Next.js App Router
-│   ├── page.tsx           # Access gate (Screen 0)
-│   ├── layout.tsx         # Root layout with PWA meta
-│   ├── globals.css        # Tailwind + custom styles
-│   ├── roulette/page.tsx  # Scene Roulette (Screen 1)
-│   ├── record/page.tsx    # Camera recording (Screen 2)
-│   ├── feedback/page.tsx  # AI feedback display (Screen 3)
-│   └── api/
-│       ├── access/route.ts   # Access validation
-│       ├── pool/route.ts     # Sentence pool generation
-│       ├── exercise/route.ts # Exercise lifecycle
-│       └── analyze/route.ts  # Video analysis pipeline
+├── app/
+│   ├── page.tsx            # Redirects straight to /roulette
+│   ├── roulette/page.tsx   # Screen 1 — spin for line + emotion
+│   ├── record/page.tsx     # Screen 2 — camera capture + submit
+│   └── feedback/page.tsx   # Screen 3 — scores, roast, retry/deltas
 ├── components/
-│   ├── RouletteWheel.tsx     # Casino-style spinner
-│   ├── CameraCapture.tsx     # Front camera + recording
-│   ├── FeedbackDisplay.tsx   # Scores + deltas
-│   ├── AccessGate.tsx        # Age/consent form
-│   ├── LoadingSpinner.tsx    # Loading indicator
-│   └── ErrorDisplay.tsx      # Error with retry
+│   ├── RouletteWheel.tsx   # Casino-style spinner + shake-to-spin
+│   ├── CameraCapture.tsx   # Front camera, countdown, recording, preview
+│   ├── FeedbackDisplay.tsx # Scores, viral meter, roast card, share
+│   └── ...
 ├── lib/
-│   ├── ai.ts               # AI stubs (replace with OpenAI)
-│   ├── exerciseStore.ts    # In-memory exercise store
-│   ├── fallbackPool.ts     # Safe fallback sentences
-│   ├── session.ts          # Session management
-│   └── validation.ts       # Zod schemas + validators
-├── types/
-│   └── index.ts            # Shared TypeScript types
-└── middleware.ts           # Route protection
+│   ├── ai.ts               # Browser-side OpenAI pipeline + mock fallback
+│   ├── fallbackPool.ts     # 50 lines + 20 emotions
+│   └── useShake.ts         # DeviceMotion shake detection hook
+└── types/index.ts          # Shared types + constants
 ```
-
-## Configuration
-
-### Environment Variables
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `SESSION_SECRET` | ✅ | Min 32 chars, used for signed cookies |
-| `OPENAI_API_KEY` | ⏳ | Add when configuring AI |
-
-### AI Configuration
-
-The AI module in `src/lib/ai.ts` uses stubs by default (`FALLBACK_MODE = true`). 
-To enable real AI:
-
-1. Set `OPENAI_API_KEY` in environment
-2. Change `FALLBACK_MODE = false` in `src/lib/ai.ts`
-3. The pipeline uses:
-   - **GPT-5 mini** — Performance analysis from video frames
-   - **GPT-4o mini Transcribe** — Audio transcription
 
 ## Testing
 
 ```bash
-# Unit + component + integration tests
-npm test
-
-# With coverage
-npm run test:coverage
-
-# E2E tests (requires dev server)
-npx playwright test
-
-# Watch mode
-npm run test:watch
+npm test              # unit + component tests
+npm run test:coverage # with coverage
+npx playwright test   # E2E (requires dev server running)
 ```
-
-### Test Coverage
-
-| Layer | File | Tests |
-|-------|------|-------|
-| Unit | `tests/unit/validation.test.ts` | Video validation, line validation, schemas |
-| Unit | `tests/unit/fallbackPool.test.ts` | Pool size, uniqueness, content safety |
-| Unit | `tests/unit/session.test.ts` | Encode/decode, tamper detection |
-| Unit | `tests/unit/types.test.ts` | Constants and type exports |
-| Component | `tests/component/RouletteWheel.test.tsx` | Idle/spin/landed states, disabled |
-| Component | `tests/component/AccessGate.test.tsx` | Form rendering |
-| Integration | `tests/integration/api.test.ts` | API validation logic |
-| E2E | `tests/e2e/full-flow.spec.ts` | Full user journey |
-
-## API Routes
-
-### `POST /api/access`
-Validate age confirmation and video consent, set session cookie.
-
-### `GET /api/pool`
-Return pre-generated sentence pool (8 lines + emotions).
-
-### `POST /api/exercise`
-Commit a roulette spin as an active exercise.
-
-### `GET /api/exercise?id=xxx`
-Retrieve exercise details.
-
-### `POST /api/analyze`
-Submit video take, get AI feedback. Multipart form:
-- `video` — WebM file
-- `exerciseId` — Exercise reference
-- `attempt` — 1 or 2
-- `line`, `emotion` — Challenge pairing
-
-## Design System
-
-The casino-inspired theme uses these custom Tailwind colors:
-
-- **Stage** (`stage-*`) — Dark theater background (`#0a0a0f`)
-- **Crimson** (`crimson-*`) — Primary accent (`#dc2626`)
-- **Gold** (`gold-*`) — Secondary accent (`#f59e0b`)
-- **Electric** (`electric-*`) — Interactive elements (`#6366f1`)
-
-Animations respect `prefers-reduced-motion`.
 
 ## Privacy
 
-- No user accounts or stored personal data
-- Videos processed in isolated temp directories
-- All files deleted after analysis (success or failure)
-- 20-minute exercise TTL (in-memory)
-- No AI inference on identity, age, or appearance
+- No accounts, no sign-in, no server-side storage.
+- Video never leaves the device except as ephemeral frames/audio sent directly to OpenAI for analysis — nothing is persisted server-side because there is no server.
+- All exercise/session state lives in `sessionStorage` and is cleared on new scenes or tab close.
 
 ## License
 
-Private Pilot — Internal use only.
+Private — hackathon submission.
