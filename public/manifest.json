@@ -1,0 +1,27 @@
+{
+  "name": "Actor Coach — Scene Roulette",
+  "short_name": "Actor Coach",
+  "description": "A casino-inspired PWA for actors to practice scenes with AI-powered feedback.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#050508",
+  "theme_color": "#050508",
+  "scope": "/",
+  "categories": ["education", "entertainment"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": []
+}

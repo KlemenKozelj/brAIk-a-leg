@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  html {
+    @apply bg-stage-dark text-white;
+    -webkit-text-size-adjust: 100%;
+  }
+  
+  body {
+    @apply min-h-dvh overflow-x-hidden;
+    overscroll-behavior: none;
+  }
+
+  /* Portrait-first responsive */
+  @media (orientation: landscape) and (max-height: 600px) {
+    html {
+      @apply overflow-y-auto;
+    }
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
