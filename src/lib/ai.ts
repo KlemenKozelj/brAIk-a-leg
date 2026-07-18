@@ -154,6 +154,12 @@ function clampScore(n: unknown): number {
   return Math.max(1, Math.min(5, Math.round(num)));
 }
 
+function clampViral(n: unknown): number {
+  const num = Number(n);
+  if (isNaN(num)) return 5;
+  return Math.max(1, Math.min(10, Math.round(num)));
+}
+
 function parseFeedback(raw: string): Feedback {
   try {
     const parsed = JSON.parse(raw);
@@ -165,6 +171,8 @@ function parseFeedback(raw: string): Feedback {
       },
       strength: typeof parsed.strength === 'string' ? parsed.strength : 'Good take overall.',
       retryCue: typeof parsed.retryCue === 'string' ? parsed.retryCue : 'Keep practicing.',
+      roast: typeof parsed.roast === 'string' ? parsed.roast : 'You tried. That counts for something. Maybe.',
+      viralScore: clampViral(parsed.viralScore),
     };
   } catch {
     throw new Error('AI returned malformed feedback');
@@ -186,14 +194,18 @@ Line to deliver: "${line}"
 Target emotion: ${emotion}
 Transcript of what was said: "${transcript}"
 
-Analyze the performance across three dimensions (1-5 scale):
-- emotion: How well did they convey the target emotion?
-- clarity: How clear was their speech and diction?
-- pace: How effective was their pacing and timing?
+Analyze the performance across these dimensions:
+- emotion (1-5): How well did they convey the target emotion?
+- clarity (1-5): How clear was their speech and diction?
+- pace (1-5): How effective was their pacing and timing?
+- viralScore (1-10): How viral would this take be on TikTok? (1 = "my grandma would scroll past", 10 = "this would break the internet")
+- roast: One funny, slightly mean roast about their performance. Humorous, not cruel — like a friend teasing you.
 
 Return ONLY valid JSON with this structure:
 {
   "scores": { "emotion": <1-5>, "clarity": <1-5>, "pace": <1-5> },
+  "viralScore": <1-10>,
+  "roast": "one funny roast sentence",
   "strength": "one sentence about what they did well",
   "retryCue": "one sentence about what to improve on the retry"
 }
@@ -268,6 +280,33 @@ const FUNNY_CUES = [
   (e: string) => `You're giving "${e}" which is great, but also a little "I forgot my lines" — fake it till you make it!`,
 ];
 
+const ROASTS = [
+  (e: string) => `That was so ${e} it felt like watching a cat try to swim. Bold. Confusing. Memorable.`,
+  (e: string) => `You delivered that line like someone who's never heard human speech before. Very avant-garde.`,
+  (e: string) => `Watching you act is like watching a giraffe ice skate — fascinating but I'm genuinely worried.`,
+  (e: string) => `Your ${e} energy was giving "AI that was trained exclusively on bad telenovelas." Keep it up?`,
+  (e: string) => `That performance had all the emotional depth of a cardboard cutout of a confused horse.`,
+  (e: string) => `You acted ${e} the way a flamingo acts "tough" — adorable and completely unconvincing.`,
+  (e: string) => `If awkwardness was currency, your ${e} delivery just paid off my student loans.`,
+  (e: string) => `That take was so stiff I'm pretty sure rigor mortis has more range. But it's a look!`,
+  (e: string) => `Your ${e} face looked like you were trying to read a menu from across the street. Without glasses. In the dark.`,
+  (e: string) => `You committed to ${e} the way a grandparent commits to using emojis. Technically correct. Emotionally terrifying.`,
+  (e: string) => `That was the human equivalent of a loading screen. Just spinning. Waiting. Nothing happens.`,
+  (e: string) => `You played ${e} like a dude who's never felt an emotion but read about them once on Wikipedia.`,
+  (e: string) => `Your acting made me feel secondhand embarrassment for your mirror at home. It's seen things.`,
+  (e: string) => `That was so ${e} it looped back around to confusing. Like watching a pigeon argue with its reflection.`,
+  (e: string) => `You delivered that with the confidence of someone who just realized their fly is down mid-speech.`,
+];
+
+function randomViralScore(): number {
+  // Weighted toward middle with some outliers
+  const r = Math.random();
+  if (r < 0.1) return Math.floor(Math.random() * 3) + 1;    // 1-3: 10%
+  if (r < 0.3) return Math.floor(Math.random() * 2) + 8;    // 8-9: 20%
+  if (r < 0.5) return 10;                                     // 10: 20%
+  return Math.floor(Math.random() * 4) + 4;                   // 4-7: 50%
+}
+
 function mockAnalyze(emotion: string, reason?: string): Feedback {
   const scores: PerformanceScores = {
     emotion: Math.floor(Math.random() * 3) + 3,
@@ -279,6 +318,8 @@ function mockAnalyze(emotion: string, reason?: string): Feedback {
     scores,
     strength: FUNNY_STRENGTHS[Math.floor(Math.random() * FUNNY_STRENGTHS.length)],
     retryCue: FUNNY_CUES[Math.floor(Math.random() * FUNNY_CUES.length)](emotion),
+    roast: ROASTS[Math.floor(Math.random() * ROASTS.length)](emotion),
+    viralScore: randomViralScore(),
     warning: reason || '⚠️ **Simulated Mode** — no OpenAI API key detected. Set `NEXT_PUBLIC_OPENAI_API_KEY` in `.env.local` for real AI analysis. Until then, enjoy these entirely made-up compliments! 🎭',
   };
 }

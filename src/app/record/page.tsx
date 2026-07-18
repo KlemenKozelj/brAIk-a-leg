@@ -79,6 +79,14 @@ export default function RecordPage() {
         <p className="text-crimson-light text-xs uppercase tracking-[0.15em] mt-0.5">Record your scene</p>
       </div>
 
+      {/* Emotion badge */}
+      <div className="w-full max-w-sm mb-1">
+        <div className="flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-electric/20 to-crimson/20 border border-electric/30">
+          <span className="text-xs text-white/40 uppercase tracking-wider">Emotion:</span>
+          <span className="text-sm font-bold text-electric-light uppercase tracking-wide">{exercise.emotion}</span>
+        </div>
+      </div>
+
       <CameraCapture
         challenge={`${exercise.line}`}
         onComplete={handleComplete}
