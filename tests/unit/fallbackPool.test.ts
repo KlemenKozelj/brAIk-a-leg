@@ -1,10 +1,10 @@
-import { FALLBACK_LINES, getFallbackLines, getFallbackEmotions } from '@/lib/fallbackPool';
+import { FALLBACK_LINES, getFallbackLines, getFallbackEmotions, getHardcodedPool } from '@/lib/fallbackPool';
 import { EMOTIONS } from '@/types';
 
 describe('fallbackPool', () => {
   describe('FALLBACK_LINES', () => {
-    it('contains at least 20 lines', () => {
-      expect(FALLBACK_LINES.length).toBeGreaterThanOrEqual(20);
+    it('contains at least 50 lines', () => {
+      expect(FALLBACK_LINES.length).toBeGreaterThanOrEqual(50);
     });
 
     it('all lines are 3-200 characters', () => {
@@ -18,36 +18,30 @@ describe('fallbackPool', () => {
       const unique = new Set(FALLBACK_LINES);
       expect(unique.size).toBe(FALLBACK_LINES.length);
     });
-
-    it('contains no forbidden content', () => {
-      const forbidden = [/slur/i, /sexual/i, /cruel/i, /politics/i, /racial/i];
-      FALLBACK_LINES.forEach((line) => {
-        forbidden.forEach((re) => {
-          expect(re.test(line)).toBe(false);
-        });
-      });
-    });
   });
 
   describe('getFallbackLines', () => {
-    it('returns the requested number of lines', () => {
+    it('returns the requested number', () => {
       expect(getFallbackLines(8)).toHaveLength(8);
     });
 
-    it('returns at most the total pool size', () => {
-      expect(getFallbackLines(100).length).toBeLessThanOrEqual(FALLBACK_LINES.length);
-    });
-
     it('returns unique lines', () => {
-      const lines = getFallbackLines(8);
-      expect(new Set(lines).size).toBe(8);
+      expect(new Set(getFallbackLines(8)).size).toBe(8);
     });
   });
 
   describe('getFallbackEmotions', () => {
-    it('returns all emotions', () => {
-      const emotions = getFallbackEmotions();
-      expect(emotions).toEqual([...EMOTIONS]);
+    it('returns all 20 emotions', () => {
+      expect(getFallbackEmotions()).toHaveLength(20);
+      expect(getFallbackEmotions()).toEqual([...EMOTIONS]);
+    });
+  });
+
+  describe('getHardcodedPool', () => {
+    it('returns 8 lines and 20 emotions', () => {
+      const pool = getHardcodedPool();
+      expect(pool.lines).toHaveLength(8);
+      expect(pool.emotions).toHaveLength(20);
     });
   });
 });

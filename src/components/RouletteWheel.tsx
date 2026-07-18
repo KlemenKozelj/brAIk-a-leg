@@ -8,7 +8,6 @@ interface RouletteWheelProps {
   emotions: string[];
   onSpin: () => void;
   onComplete: (result: RouletteResult) => void;
-  isActive: boolean;
   disabled: boolean;
 }
 
@@ -19,7 +18,6 @@ export default function RouletteWheel({
   emotions,
   onSpin,
   onComplete,
-  isActive,
   disabled,
 }: RouletteWheelProps) {
   const [phase, setPhase] = useState<Phase>('idle');
@@ -147,28 +145,15 @@ export default function RouletteWheel({
         </button>
       )}
 
-      {/* Start Take Button */}
+      {/* Challenge display */}
       {phase === 'landed' && (
-        <div className="flex flex-col items-center gap-3 animate-fade-in">
+        <div className="flex flex-col items-center gap-2 animate-fade-in">
           <div className="flex gap-2 items-center">
             <span className="text-gold text-sm font-semibold uppercase tracking-wider">Your challenge</span>
           </div>
           <p className="text-electric-light text-center italic text-sm">
             Say the line as if you are {finalEmotion}
           </p>
-          <button
-            disabled={!isActive}
-            className={`
-              px-10 py-4 rounded-full text-lg font-bold transition-all duration-200
-              ${
-                isActive
-                  ? 'bg-gradient-to-r from-electric to-crimson text-white hover:scale-105 active:scale-95 animate-pulse-glow'
-                  : 'bg-gray-700 text-gray-400 cursor-not-allowed'
-              }
-            `}
-          >
-            🎬 Start take
-          </button>
         </div>
       )}
     </div>

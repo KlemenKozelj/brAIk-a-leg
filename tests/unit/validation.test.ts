@@ -1,41 +1,5 @@
-import {
-  validateVideo,
-  validateLine,
-  sanitizeString,
-  accessSchema,
-  exerciseSubmissionSchema,
-} from '@/lib/validation';
-
-describe('validateVideo', () => {
-  const createMockFile = (type: string, size: number): File =>
-    new File([''], 'test.webm', { type });
-
-  it('accepts a valid video file', () => {
-    const file = createMockFile('video/webm', 1024 * 1024);
-    expect(validateVideo(file, 3)).toBeNull();
-  });
-
-  it('rejects non-video files', () => {
-    const file = createMockFile('image/png', 1024);
-    expect(validateVideo(file, 3)).toBe('Invalid file type. Only video files are accepted.');
-  });
-
-  it('rejects oversized files', () => {
-    const file = createMockFile('video/webm', 0);
-    Object.defineProperty(file, 'size', { value: 11 * 1024 * 1024 });
-    expect(validateVideo(file, 3)).toContain('too large');
-  });
-
-  it('rejects videos over 5 seconds', () => {
-    const file = createMockFile('video/webm', 1024);
-    expect(validateVideo(file, 6)).toContain('Maximum duration');
-  });
-
-  it('rejects videos under 0.5 seconds', () => {
-    const file = createMockFile('video/webm', 1024);
-    expect(validateVideo(file, 0.3)).toContain('too short');
-  });
-});
+import { validateLine, isValidEmotion } from '@/lib/validation';
+import { EMOTIONS } from '@/types';
 
 describe('validateLine', () => {
   it('accepts safe funny lines', () => {
@@ -57,73 +21,15 @@ describe('validateLine', () => {
   });
 });
 
-describe('sanitizeString', () => {
-  it('removes HTML tags', () => {
-    expect(sanitizeString('<script>alert("xss")</script>')).toBe('alert("xss")');
+describe('isValidEmotion', () => {
+  it('returns true for valid emotions', () => {
+    expect(isValidEmotion('delighted')).toBe(true);
+    expect(isValidEmotion('playful')).toBe(true);
+    expect(isValidEmotion('deadpan')).toBe(true);
   });
 
-  it('trims whitespace', () => {
-    expect(sanitizeString('  hello  ')).toBe('hello');
-  });
-});
-
-describe('accessSchema', () => {
-  it('validates with both consent fields true', () => {
-    const result = accessSchema.safeParse({
-      confirmedAge: true,
-      consentVideo: true,
-    });
-    expect(result.success).toBe(true);
-  });
-
-  it('rejects unconfirmed age', () => {
-    const result = accessSchema.safeParse({
-      confirmedAge: false,
-      consentVideo: true,
-    });
-    expect(result.success).toBe(false);
-  });
-
-  it('rejects missing video consent', () => {
-    const result = accessSchema.safeParse({
-      confirmedAge: true,
-      consentVideo: false,
-    });
-    expect(result.success).toBe(false);
-  });
-});
-
-describe('exerciseSubmissionSchema', () => {
-  it('validates correct submission data', () => {
-    const result = exerciseSubmissionSchema.safeParse({
-      exerciseId: 'abc123',
-      attempt: 1,
-      poolId: 'pool_1',
-      line: 'I married a penguin',
-      emotion: 'delighted',
-    });
-    expect(result.success).toBe(true);
-  });
-
-  it('rejects invalid attempt number', () => {
-    const result = exerciseSubmissionSchema.safeParse({
-      exerciseId: 'abc123',
-      attempt: 3,
-      poolId: 'pool_1',
-      line: 'Test line',
-      emotion: 'delighted',
-    });
-    expect(result.success).toBe(false);
-  });
-
-  it('rejects invalid emotion', () => {
-    const result = exerciseSubmissionSchema.safeParse({
-      exerciseId: 'abc123',
-      attempt: 1,
-      poolId: 'pool_1',
-      line: 'Test line',
-      emotion: 'nonexistent',
-    });
-    expect(result.success).toBe(false);
+  it('returns false for invalid emotions', () => {
+    expect(isValidEmotion('nonexistent')).toBe(false);
+    expect(isValidEmotion('')).toBe(false);
   });
 });

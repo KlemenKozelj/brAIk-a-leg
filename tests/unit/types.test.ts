@@ -1,14 +1,15 @@
-import { EMOTIONS, SCORE_LABELS, MAX_VIDEO_SIZE, MAX_VIDEO_DURATION, EXERCISE_TTL } from '@/types';
+import { EMOTIONS, SCORE_LABELS, MAX_VIDEO_SIZE, MAX_VIDEO_DURATION } from '@/types';
 
 describe('types and constants', () => {
-  it('EMOTIONS has exactly 10 entries', () => {
-    expect(EMOTIONS).toHaveLength(10);
+  it('EMOTIONS has exactly 20 entries', () => {
+    expect(EMOTIONS).toHaveLength(20);
   });
 
-  it('EMOTIONS contains all expected values', () => {
+  it('EMOTIONS contains key values', () => {
     expect(EMOTIONS).toContain('delighted');
-    expect(EMOTIONS).toContain('furious');
     expect(EMOTIONS).toContain('deadpan');
+    expect(EMOTIONS).toContain('anxious');
+    expect(EMOTIONS).toContain('playful');
   });
 
   it('SCORE_LABELS has correct keys', () => {
@@ -17,15 +18,8 @@ describe('types and constants', () => {
     expect(SCORE_LABELS).toHaveProperty('pace');
   });
 
-  it('MAX_VIDEO_SIZE is 10MB', () => {
+  it('MAX_VIDEO_SIZE is 10MB and MAX_VIDEO_DURATION is 5s', () => {
     expect(MAX_VIDEO_SIZE).toBe(10 * 1024 * 1024);
-  });
-
-  it('MAX_VIDEO_DURATION is 5 seconds', () => {
     expect(MAX_VIDEO_DURATION).toBe(5);
-  });
-
-  it('EXERCISE_TTL is 20 minutes', () => {
-    expect(EXERCISE_TTL).toBe(20 * 60 * 1000);
   });
 });
