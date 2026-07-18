@@ -140,14 +140,14 @@ export default function CameraCapture({
   return (
     <div className="flex flex-col items-center gap-4 w-full max-w-sm mx-auto">
       {/* Challenge reminder */}
-      <div className="text-center p-3 rounded-lg bg-stage-light border border-crimson/30 w-full">
-        <p className="text-white font-display text-sm sm:text-base">
-          &ldquo;{challenge}&rdquo;
+      <div className="text-center p-3 rounded-lg bg-stage-light border border-crimson/20 w-full">
+        <p className="text-gray-900 font-display text-sm sm:text-base">
+          🎭 &ldquo;{challenge}&rdquo;
         </p>
       </div>
 
       {/* Camera / Preview */}
-      <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden bg-black border-2 border-gold/30">
+      <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden bg-black border-2 border-gold-light/40 shadow-lg">
         {/* Single persistent live camera feed — never re-creates, prevents black screen */}
         {state !== 'preview' && state !== 'submitted' && (
           <video
@@ -173,8 +173,8 @@ export default function CameraCapture({
 
         {/* Camera off overlay */}
         {state === 'idle' && !streamRef.current && (
-          <div className="absolute inset-0 flex items-center justify-center bg-stage-dark/80">
-            <div className="text-center text-gold/60">
+          <div className="absolute inset-0 flex items-center justify-center bg-black/80">
+            <div className="text-center text-gold-light/80">
               <p className="text-4xl mb-2">🎥</p>
               <p className="text-sm">Camera off</p>
             </div>
@@ -203,8 +203,8 @@ export default function CameraCapture({
 
       {/* Error */}
       {error && (
-        <div className="text-crimson text-sm text-center bg-crimson/10 p-3 rounded-lg w-full">
-          {error}
+        <div className="text-crimson text-sm text-center bg-crimson/5 border border-crimson/20 p-3 rounded-lg w-full">
+          ⚠️ {error}
         </div>
       )}
 
@@ -214,7 +214,7 @@ export default function CameraCapture({
           <button
             onClick={startCamera}
             disabled={disabled}
-            className="flex-1 py-3 rounded-full bg-gradient-to-r from-crimson to-gold text-white font-bold hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 py-3 rounded-full bg-gradient-to-r from-crimson to-gold-light text-white font-bold shadow-lg shadow-crimson/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             🎬 Start recording
           </button>
@@ -233,13 +233,13 @@ export default function CameraCapture({
           <>
             <button
               onClick={handleReRecord}
-              className="flex-1 py-3 rounded-full border border-gold text-gold font-bold hover:bg-gold/10 transition-all"
+              className="flex-1 py-3 rounded-full border border-gold-light text-gold font-bold hover:bg-gold-light/10 transition-all"
             >
               🔄 Re-record
             </button>
             <button
               onClick={handleSubmit}
-              className="flex-1 py-3 rounded-full bg-gradient-to-r from-electric to-crimson text-white font-bold hover:scale-[1.02] active:scale-95 transition-all"
+              className="flex-1 py-3 rounded-full bg-gradient-to-r from-electric to-crimson text-white font-bold shadow-lg shadow-electric/20 hover:scale-[1.02] active:scale-95 transition-all"
             >
               ✅ Submit take
             </button>

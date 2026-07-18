@@ -67,23 +67,23 @@ export default function RecordPage() {
     }
   }, [exercise, router]);
 
-  if (loading) return <div className="flex-1 flex items-center justify-center text-white/60">Preparing...</div>;
+  if (loading) return <div className="flex-1 flex items-center justify-center text-gray-500">✨ Preparing...</div>;
   if (!exercise) return null;
 
   return (
-    <div className="flex-1 flex flex-col items-center px-4 py-6 bg-gradient-to-b from-stage-dark via-stage to-stage-light">
+    <div className="flex-1 flex flex-col items-center px-4 py-6 bg-gradient-to-b from-white via-white to-stage-light">
       <div className="text-center mb-4">
-        <h2 className="text-lg font-display text-gold">
-          Take {attemptRef.current}{attemptRef.current === 2 ? ' (Coached Retry)' : ''}
+        <h2 className="text-lg font-display text-gray-900">
+          🎬 Take {attemptRef.current}{attemptRef.current === 2 ? ' (Coached Retry)' : ''}
         </h2>
-        <p className="text-crimson-light text-xs uppercase tracking-[0.15em] mt-0.5">Record your scene</p>
+        <p className="text-crimson text-xs font-semibold uppercase tracking-[0.15em] mt-0.5">Record your scene</p>
       </div>
 
       {/* Emotion badge */}
       <div className="w-full max-w-sm mb-1">
-        <div className="flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-electric/20 to-crimson/20 border border-electric/30">
-          <span className="text-xs text-white/40 uppercase tracking-wider">Emotion:</span>
-          <span className="text-sm font-bold text-electric-light uppercase tracking-wide">{exercise.emotion}</span>
+        <div className="flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-electric/10 to-crimson/10 border border-electric/30">
+          <span className="text-xs text-gray-500 uppercase tracking-wider">🎭 Emotion:</span>
+          <span className="text-sm font-bold text-electric uppercase tracking-wide">{exercise.emotion}</span>
         </div>
       </div>
 
@@ -94,13 +94,13 @@ export default function RecordPage() {
       />
 
       {error && (
-        <div className="mt-4 w-full max-w-sm text-crimson text-sm text-center bg-crimson/10 p-3 rounded-lg">
-          {error}
+        <div className="mt-4 w-full max-w-sm text-crimson text-sm text-center bg-crimson/5 border border-crimson/20 p-3 rounded-lg">
+          ⚠️ {error}
         </div>
       )}
 
       {submitting && (
-        <div className="mt-3 text-center text-white/50 text-sm">⏳ Analyzing your take...</div>
+        <div className="mt-3 text-center text-gray-500 text-sm">⏳ Analyzing your take...</div>
       )}
     </div>
   );

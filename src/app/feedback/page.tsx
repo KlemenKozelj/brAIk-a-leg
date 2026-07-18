@@ -43,19 +43,19 @@ export default function FeedbackPage() {
     router.push('/roulette');
   }, [router]);
 
-  if (loading) return <div className="flex-1 flex items-center justify-center text-white/60">Loading feedback...</div>;
+  if (loading) return <div className="flex-1 flex items-center justify-center text-gray-500">✨ Loading feedback...</div>;
   if (!analysis) return null;
 
   const isFirstTake = attempt === 1;
 
   return (
-    <div className="flex-1 flex flex-col items-center px-4 py-8 bg-gradient-to-b from-stage-dark via-stage to-stage-light">
+    <div className="flex-1 flex flex-col items-center px-4 py-8 bg-gradient-to-b from-white via-white to-stage-light">
       <div className="text-center mb-6">
-        <h2 className="text-xl sm:text-2xl font-display text-gold">
+        <h2 className="text-xl sm:text-2xl font-display text-gray-900">
           {isFirstTake ? '📊 Take 1 Feedback' : '📊 Final Feedback'}
         </h2>
-        <p className="text-crimson-light text-xs uppercase tracking-[0.15em] mt-0.5">
-          {isFirstTake ? 'One more take to improve!' : 'Great work!'}
+        <p className="text-crimson text-xs font-semibold uppercase tracking-[0.15em] mt-0.5">
+          {isFirstTake ? '🔁 One more take to improve!' : '🎉 Great work!'}
         </p>
       </div>
 

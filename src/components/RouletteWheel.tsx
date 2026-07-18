@@ -103,11 +103,10 @@ export default function RouletteWheel({
       {/* Emotion Wheel */}
       <div className="relative w-28 h-28 sm:w-32 sm:h-32">
         <div
-          className={`w-full h-full rounded-full border-2 border-gold/60 flex items-center justify-center
+          className={`w-full h-full rounded-full border-2 border-gold-light/60 bg-white flex items-center justify-center
             ${phase === 'spinning' && !prefersReducedMotion ? 'animate-spin-slow' : ''}
-            ${phase === 'landed' ? 'border-gold shadow-[0_0_20px_rgba(245,158,11,0.6)]' : ''}
+            ${phase === 'landed' ? 'border-gold-light shadow-lg shadow-gold-light/30' : ''}
           `}
-          style={{ borderColor: phase === 'landed' ? '#f59e0b' : undefined }}
         >
           <span
             className={`text-sm sm:text-base font-semibold text-center px-2 transition-opacity duration-200
@@ -126,21 +125,21 @@ export default function RouletteWheel({
       {/* Main Line Reel */}
       <div
         className={`w-full min-h-[5rem] sm:min-h-[6rem] rounded-xl border-2 flex items-center justify-center p-4 sm:p-6
-          ${phase === 'idle' ? 'border-crimson/30 bg-stage-light/50' : ''}
+          ${phase === 'idle' ? 'border-crimson/20 bg-stage-light/60' : ''}
           ${phase === 'spinning' && !prefersReducedMotion ? 'border-crimson/70 bg-stage-light animate-pulse-glow' : ''}
-          ${phase === 'landed' ? 'border-crimson bg-stage-light shadow-[0_0_30px_rgba(220,38,38,0.4)]' : ''}
+          ${phase === 'landed' ? 'border-crimson bg-white shadow-lg shadow-crimson/15' : ''}
           transition-all duration-300
         `}
       >
         <p
           className={`text-center font-display text-lg sm:text-xl md:text-2xl leading-relaxed transition-all duration-200
-            ${phase === 'idle' ? 'text-gold/30 text-base italic' : ''}
+            ${phase === 'idle' ? 'text-gray-400 text-base italic' : ''}
             ${phase === 'spinning' ? 'text-gold/80' : ''}
-            ${phase === 'landed' ? 'text-white animate-bounce-in' : ''}
+            ${phase === 'landed' ? 'text-gray-900 animate-bounce-in' : ''}
           `}
         >
           {phase === 'idle'
-            ? 'Tap to spin your scene...'
+            ? '🎲 Tap to spin your scene...'
             : phase === 'spinning'
             ? `"${lines[lineIndex]}"`
             : `"${finalLine}"`}
@@ -157,8 +156,8 @@ export default function RouletteWheel({
             transition-all duration-200
             ${
               disabled || phase === 'spinning'
-                ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                : 'bg-gradient-to-r from-crimson to-gold text-white hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(220,38,38,0.5)] hover:shadow-[0_0_30px_rgba(220,38,38,0.7)]'
+                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                : 'bg-gradient-to-r from-crimson to-gold-light text-white hover:scale-105 active:scale-95 shadow-lg shadow-crimson/25 hover:shadow-xl hover:shadow-crimson/30'
             }
           `}
         >
@@ -169,19 +168,19 @@ export default function RouletteWheel({
       {/* Shake hint */}
       {shakeHint && (phase === 'idle' || phase === 'landed') && (
         <div className="flex flex-col items-center gap-2">
-          <p className="text-white/30 text-xs animate-pulse">
+          <p className="text-gray-400 text-xs animate-pulse">
             {phase === 'idle' ? '👋 or shake your phone to spin!' : '👋 shake again for a new scene!'}
           </p>
           {!hasPermission && (
             <button
               onClick={requestPermission}
-              className="text-xs text-electric-light underline hover:text-electric transition-colors"
+              className="text-xs text-electric underline hover:text-electric-dark transition-colors"
             >
-              Enable shake detection
+              📳 Enable shake detection
             </button>
           )}
           {hasPermission && (
-            <p className="text-white/20 text-[10px]">
+            <p className="text-gray-300 text-[10px]">
               Shake detected ✓
             </p>
           )}
@@ -192,9 +191,9 @@ export default function RouletteWheel({
       {phase === 'landed' && (
         <div className="flex flex-col items-center gap-2 animate-fade-in">
           <div className="flex gap-2 items-center">
-            <span className="text-gold text-sm font-semibold uppercase tracking-wider">Your challenge</span>
+            <span className="text-gold text-sm font-semibold uppercase tracking-wider">🎯 Your challenge</span>
           </div>
-          <p className="text-electric-light text-center italic text-sm">
+          <p className="text-electric text-center italic text-sm">
             Say the line as if you are {finalEmotion}
           </p>
         </div>

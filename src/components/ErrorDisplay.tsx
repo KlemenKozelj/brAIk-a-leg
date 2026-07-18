@@ -13,9 +13,9 @@ export default function ErrorDisplay({ message, onRetry }: ErrorDisplayProps) {
       {onRetry && (
         <button
           onClick={onRetry}
-          className="px-6 py-2 rounded-full border border-crimson text-crimson hover:bg-crimson/10 transition-all text-sm"
+          className="px-6 py-2 rounded-full border border-crimson text-crimson hover:bg-crimson/5 transition-all text-sm"
         >
-          Try again
+          🔄 Try again
         </button>
       )}
     </div>

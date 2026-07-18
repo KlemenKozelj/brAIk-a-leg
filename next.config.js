@@ -1,20 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // PWA headers
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          { key: 'X-Content-Type-Options', value: 'nosniff' },
-          { key: 'X-Frame-Options', value: 'DENY' },
-          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-        ],
-      },
-    ];
-  },
-  output: 'standalone',
+  // Static export: this app has no backend/API routes (see .goosehints),
+  // and the S3 + CloudFront deploy target can only serve static files.
+  // (headers() has no effect under 'export' — CloudFront serves the security
+  // headers instead, see infra/cloudfront-headers policy if one is added.)
+  output: 'export',
 };
 
 module.exports = nextConfig;

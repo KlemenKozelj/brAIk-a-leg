@@ -10,9 +10,9 @@ const config: Config = {
     extend: {
       colors: {
         stage: {
-          DEFAULT: '#0a0a0f',
-          dark: '#050508',
-          light: '#141420',
+          DEFAULT: '#ffffff',
+          dark: '#ffffff',
+          light: '#f4f4f6',
         },
         crimson: {
           DEFAULT: '#dc2626',
@@ -20,14 +20,14 @@ const config: Config = {
           dark: '#b91c1c',
         },
         gold: {
-          DEFAULT: '#f59e0b',
-          light: '#fbbf24',
-          dark: '#d97706',
+          DEFAULT: '#b45309',
+          light: '#f59e0b',
+          dark: '#92400e',
         },
         electric: {
-          DEFAULT: '#6366f1',
-          light: '#818cf8',
-          dark: '#4f46e5',
+          DEFAULT: '#4f46e5',
+          light: '#6366f1',
+          dark: '#4338ca',
         },
       },
       fontFamily: {
@@ -50,8 +50,8 @@ const config: Config = {
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         pulseGlow: {
-          '0%, 100%': { boxShadow: '0 0 20px rgba(220, 38, 38, 0.4)' },
-          '50%': { boxShadow: '0 0 40px rgba(220, 38, 38, 0.8)' },
+          '0%, 100%': { boxShadow: '0 4px 14px rgba(220, 38, 38, 0.25)' },
+          '50%': { boxShadow: '0 8px 28px rgba(220, 38, 38, 0.45)' },
         },
         bounceIn: {
           '0%': { opacity: '0', transform: 'scale(0.3)' },
